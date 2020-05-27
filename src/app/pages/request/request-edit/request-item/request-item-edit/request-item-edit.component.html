@@ -1,0 +1,78 @@
+<div class="col-sm-12">
+  <div class="card">
+    <div class="card-body">
+      <form [formGroup]="mainForm" novalidate>
+        <div class="form-row">
+          <div class="form-group col-sm-5"><label for="itm_pn">Item</label>
+            <div class="input-group">
+              <input [readonly]="isReadOnly" #input_focus
+              [typeahead]="states" formControlName="itm_pn"
+              (typeaheadLoading)="item_change_typeahead_loading($event)"
+              (typeaheadOnSelect)="item_typeahead_onselect($event)"
+              [typeaheadScrollable]="true"
+              [typeaheadOptionsInScrollableView]="5"
+              typeaheadOptionField="itm_pn"
+              [class.inputLoading]=item_typeahead_loading
+              class="form-control">
+              <span class="input-group-append"><button tabindex="-1" type="button" class="btn btn-primary"><i class="fa fa-search"></i></button></span>
+            </div>
+            <div class="small" *ngIf="!mainForm.controls['itm_pn'].valid && mainForm.controls['itm_pn'].touched" style="color: red">Esse campo não pode ficar em branco!</div>
+          </div>
+
+          <!--QUANTIDADE-->
+          <div class="form-group col-sm-2">
+            <label for="itm_quantity">Quantidade</label>
+            <input [readonly]="isReadOnly" min="1" type="number" formControlName="itm_quantity" class="form-control">
+          </div>
+          <!--PRIORIDADE-->
+          <div class="form-group col-sm-2">
+            <label for="itm_priority">Prioridade</label>
+            <select formControlName="itm_priority" tabindex="-1" class="form-control">
+              <option [value]="priority" *ngFor="let priority of item_priority">{{ priority }}</option>
+            </select>
+          </div>
+          <!--DATA LIMITE-->
+          <div class="form-group col-sm-3">
+            <label for="itm_deadline">Data limite</label>
+            <input [readonly]="isReadOnly" type="text" #input_focus tabindex="-1" formControlName="itm_deadline" [textMask]="{ mask: dateMask }" class="form-control">
+            <div *ngIf="(mainForm.controls['itm_deadline'].valid || mainForm.controls['itm_deadline'].invalid) && mainForm.controls['itm_deadline'].touched">
+              <div class="small" *ngIf="!fluent.isValidDate(mainForm.controls['itm_deadline'].value)" style="color: red">
+                Data inválida!
+                <div *ngIf="mainForm.controls['itm_deadline'].setErrors({'invalid': true})"></div>
+              </div>
+            </div>
+          </div>
+          <!--APLICAÇÃO-->
+          <div class="form-group col-sm-3">
+            <label for="itm_application">Aplicação</label>
+            <input [readonly]="isReadOnly" type="text" tabindex="-1" formControlName="itm_application" class="form-control">
+            <div class="small" *ngIf="!mainForm.controls['itm_application'].valid && mainForm.controls['itm_application'].touched" style="color: red">Esse campo não pode ficar em branco!</div>
+          </div>
+          <!--DESCRIÇÃO-->
+          <div class="form-group col-sm-12">
+            <label for="itm_description">Descrição</label>
+            <textarea [readonly]="isReadOnly" formControlName="itm_description" class="form-control" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div *ngIf="errors.length > 0"  class="alert alert-danger"><p *ngFor="let erro of errors">{{ erro }}</p></div>
+        <div class="form-row">
+          <div class="form-group col-sm-3" *ngIf="service.master_status == 'E'"><button type="button" class="btn btn-primary  btn-block" (click)="save('new')" [disabled]="!mainForm.valid || processing">Salvar & Novo</button></div>
+          <div class="form-group col-sm-3" *ngIf="service.master_status == 'E'"><button type="button" class="btn btn-primary  btn-block" (click)="save('list')" [disabled]="!mainForm.valid || processing">Salvar & Voltar</button></div>
+          <div class="form-group col-sm-3" *ngIf="service.master_status == 'E' && mainForm.value.itm_id!=0"><button type="button" class="btn btn-primary  btn-block" [disabled]="processing" (click)="modalService.open('confirm-delete-modal-movprod-item');">Excluir</button></div>
+          <div class="form-group col-sm-3"><button type="button" class="btn btn-primary  btn-block" [disabled]="processing" (click)="list()">Voltar</button></div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<jw-modal id="confirm-delete-modal-movprod-item" number_modal="1">
+  <div class="content-modal">
+    <p>Deseja excluir o registro atual?</p>
+    <div class="form-row">
+      <div class="form-group col-sm-6"><button type="button" class="btn btn-danger btn-block" (click)="delete()">SIM</button></div>
+      <div class="form-group col-sm-6"><button type="button" class="btn btn-primary btn-block" (click)="modalService.close('confirm-delete-modal-movprod-item');">NÃO</button></div>
+    </div>
+  </div>
+</jw-modal>

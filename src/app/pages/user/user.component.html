@@ -1,0 +1,72 @@
+<form [formGroup]="searchForm" novalidate>
+    <div class="content-heading breadcrumb">
+
+        <div class="col-sm-4">Usuários</div>
+
+        <div class="col-sm-8">
+            <div class="input-group">
+              <input type="text" formControlName="text_search" #textsearch class="form-control" placeholder="Pesquisar por..." >
+              <span class="input-group-append">
+                <button type="button" class="btn btn-primary" (click)="list()"><i class="fa fa-search"></i></button>
+                <button type="button" class="btn btn-primary" (click)="edit(0)"><i class="fa fa-plus-square"></i> Adicionar</button>
+              </span>
+            </div>
+        </div>
+    </div>
+  </form>
+
+  <div class="col-sm-12 text-center" *ngIf="processing"><img src="assets/img/loading2.gif" class="img" width="50px"></div>
+
+  <div *ngIf="errors.length > 0"  class="alert alert-danger"><div *ngFor="let erro of errors">{{ erro }}</div></div>
+
+  <div  [style.display]="service.action=='listing'?'inherit':'none'">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-body">
+          <div id="no-more-tables">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr>
+                  <th class="tbl-col1">Usuário</th>
+                  <th class="tbl-col2">Email</th>
+                  <th class="tbl-col3">Função</th>
+                  <th class="tbl-col-last">#</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let obj of data_list">
+                  <td class="tbl-col1" data-title="Nome">{{ obj.use_name }}</td>
+                  <td class="tbl-col2" data-title="Email">{{ obj.use_email }}</td>
+                  <td class="tbl-col3" data-title="Função">{{ obj.use_function }}</td>
+                  <td class="tbl-col-last" data-title="#"><a href="javascript:void(0);"  tabindex="-1" (click)="edit(obj.use_id)">Editar</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="row" style="padding:10px;">
+            <div class="col-sm-4">Registros: <strong> {{ total_records }} </strong></div>
+            <div class="col-sm-4">
+              <div class="btn-toolbar" role="toolbar">
+                <div class="btn-group mr-2" role="group">
+                  <button type="button" class="btn btn-light" (click)="first_page()"> << </button>
+                  <button type="button" class="btn btn-light" (click)="previous_page()"> < </button>
+
+                  <button type="button" class="btn btn-light"><strong>{{ query_param.current_page }} of {{ total_pages }} </strong></button>
+
+                  <button type="button" class="btn btn-light" (click)="next_page()"> > </button>
+                  <button type="button" class="btn btn-light" (click)="last_page()"> >> </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-4"><input type="text" mask="0000" [(ngModel)]="query_param.row_per_page" (change)="change_row_per_page()" size="3"> Linhas por Página</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div  [style.display]="service.action=='editing'?'inherit':'none'">
+    <app-user-edit></app-user-edit>
+  </div>

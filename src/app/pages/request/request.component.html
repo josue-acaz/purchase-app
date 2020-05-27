@@ -1,0 +1,90 @@
+<form [formGroup]="searchForm" novalidate (ngSubmit)="first_page()">
+  <div class="content-heading breadcrumb">
+
+    <div class="col-sm-4"><h3>Requisições de compra</h3></div>
+    <div class="col-sm-8">
+      <div class="input-group">
+        <input type="text" formControlName="text_search" #textsearch class="form-control" (focus)="advance_search=true;" placeholder="Pesquisar por...">
+        <span class="input-group-append">
+          <button type="button" class="btn btn-primary" (click)="first_page()"><i class="fa fa-search"></i></button>
+          <button type="button" class="btn btn-primary" (click)="edit(0)"><i class="fa fa-plus-square"></i> Adicionar</button>
+        </span>
+      </div>
+
+      <!--BUSCA AVANÇADA-->
+      <div class="dropdown-jr-content" [style.display]="advance_search==true ? 'inherit' : 'none'">
+        <button type="button" class="close" (click)="advance_search=false;"><span>&times;</span></button>
+        <div class="form-row">
+          <div class="form-check mb-2 mr-sm-2">
+              <div class="checkbox c-checkbox">
+                  <label><input type="checkbox" formControlName="list_open" /><span class="fa fa-check"></span>Mostrar Em aberto</label>
+              </div>
+          </div>
+          <div class="form-check mb-2 mr-sm-2">
+              <div class="checkbox c-checkbox">
+                  <label><input type="checkbox" formControlName="list_finished" /><span class="fa fa-check"></span>Mostrar Efetivados</label>
+              </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</form>
+
+<div [style.display]="service.action=='editing'?'inherit':'none'">
+  <app-request-edit></app-request-edit>
+</div>
+
+<div  [style.display]="service.action=='listing'?'inherit':'none'">
+  <div class="col-sm-12">
+    <div class="list-group mb-3">
+      <div class="list-group-item"  *ngFor="let obj of data_list">
+        <div class="d-flex align-items-center py-3">
+          <div class="col-sm-12 row">
+            <!--Informações da requisição-->
+            <div class="col-sm-8 text-left">
+              <p class="m-0"><strong>{{ obj.req_application }}</strong></p>
+              <p class="m-0"> Prioridade: {{ obj.req_priority }} </p>
+              <p class="m-0"> Terefa: {{ obj.req_description }} </p>
+              <p class="m-0"> Data limite: {{ toolsService.format_data_sql_br(obj.req_deadline) }} </p>
+              <div *ngIf="obj.req_status=='A'"><p class="mt-2 badge badge-warning" href="">Pendente</p></div>
+              <div *ngIf="obj.req_status=='C'"><p class="mt-2 badge badge-success" href="">Aprovada</p></div>
+              <div *ngIf="obj.req_status=='P'"><p class="mt-2 badge badge-primary" href="">Aprovada parcialmente</p></div>
+              <div *ngIf="obj.req_status=='N'"><p class="mt-2 badge badge-danger" href="">Não aprovada</p></div>
+            </div>
+            <!--Status e Ações da requisição-->
+            <div class="col-sm-4 text-right">
+              <div class="float-right" *ngIf="obj.req_status=='A' || obj.req_status=='C' || obj.req_status=='P' || obj.req_status=='N'"><a href="javascript:void(0);" (click)="edit(obj.req_id);"> Ver </a></div>
+              <div class="float-right" *ngIf="obj.req_status=='E'"><a href="javascript:void(0);" (click)="edit(obj.req_id);"> Editar </a></div>
+              <br/><br/>
+              <div class="float-right">
+                <p class="mb-1" *ngIf="obj.req_status=='E'"><a class="text-warning m-0" href="javascript:void(0);" (click)="edit(obj.req_id);">EM ABERTO</a></p>
+                <p class="mb-1" *ngIf="obj.req_status=='A' || obj.req_status=='C' || obj.req_status=='P' || obj.req_status=='N'"><a class="text-info m-0" href="javascript:void(0);" (click)="edit(obj.req_id);">EFETIVADO</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" style="padding:10px;" *ngIf="data_list.length > 0">
+    <div class="col-sm-4">Registros: <strong> {{ total_records }} </strong></div>
+    <div class="col-sm-4">
+      <div class="btn-toolbar" role="toolbar">
+        <div class="btn-group mr-2" role="group">
+          <button type="button" class="btn btn-light" (click)="first_page()"> << </button>
+          <button type="button" class="btn btn-light" (click)="previous_page()"> < </button>
+
+          <button type="button" class="btn btn-light"><strong>{{ query_params.current_page }} of {{ total_pages }} </strong></button>
+
+          <button type="button" class="btn btn-light" (click)="next_page()"> > </button>
+          <button type="button" class="btn btn-light" (click)="last_page()"> >> </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4"><input type="text" mask="0000" [(ngModel)]="query_params.row_per_page" (change)="change_row_per_page()" size="3"> Linhas por Página</div>
+  </div>
+
+</div>

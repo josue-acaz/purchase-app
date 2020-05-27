@@ -1,0 +1,113 @@
+<div class="container-fluid">
+    <div class="card card-default">
+        <div class="card-header"><strong><h4>INFORMAÇÕES</h4></strong></div>
+        <div class="card-body" *ngIf="data_show">
+            <div class="row">
+                <div class="col-lg-6">
+                    <p class="lead bb">Detalhes</p>
+                    <form class="form-horizontal">
+                        <div class="form-group row">
+                            <div class="col-md-4">Tarefa:</div>
+                            <div class="col-md-8">
+                                <strong>{{ data_show.req_description }}</strong>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">Aplicação:</div>
+                            <div class="col-md-8">
+                                <strong>{{ data_show.req_application }}</strong>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">Prioridade:</div>
+                            <div class="col-md-8">
+                                <strong>{{ data_show.req_priority }}</strong>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">Solicitada Em:</div>
+                            <div class="col-md-8">
+                                <strong>{{ data_show.req_sent_date_hour }}</strong>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">Data limite:</div>
+                            <div class="col-md-8">
+                                <strong>{{ data_show.req_deadline }}</strong>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">Status</div>
+                            <div class="col-md-8" *ngIf="data_show.req_status == 'A'">
+                                <div class="badge badge-warning">Pendente</div>
+                            </div>
+                            <div class="col-md-8" *ngIf="data_show.req_status == 'C'">
+                              <div class="badge badge-success">Aprovada</div>
+                            </div>
+                            <div class="col-md-8" *ngIf="data_show.req_status == 'P'">
+                              <div class="badge badge-primary">Aprovada parcialmente</div>
+                            </div>
+                            <div class="col-md-8" *ngIf="data_show.req_status == 'N'">
+                              <div class="badge badge-danger">Não aprovada</div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-lg-6">
+                    <p class="lead bb">Requisitante</p>
+                    <form class="form-horizontal">
+                        <div class="form-group row">
+                            <div class="col-md-4">Nome:</div>
+                            <div class="col-md-8">
+                                <strong>{{ data_show.use_name }}</strong>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                          <div class="col-md-4">Função:</div>
+                          <div class="col-md-8">
+                              <strong>{{ data_show.use_function }}</strong>
+                          </div>
+                      </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">Email:</div>
+                            <div class="col-md-8">
+                                <strong>{{ data_show.use_email }}</strong>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">Company:</div>
+                            <div class="col-md-8">
+                                <strong>Piquiatuba Táxi Aéreo</strong>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">Telefone:</div>
+                            <div class="col-md-8">
+                                <strong>{{ data_show.use_phone }}</strong>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">Status</div>
+                            <div class="col-md-8" *ngIf="!data_show.use_excluded">
+                                <div class="badge badge-success">Ativo</div>
+                            </div>
+                        </div>
+                    </form>
+                    <!--Voltar a exibição das requisições-->
+                    <!--<a class="mr-1 badge badge-warning" href="">Pending</a>-->
+                    <div class="float-right">
+                      <button class="btn btn-primary btn-labeled" type="button" (click)="list()"><span class="btn-label"><i class="far fa-arrow-alt-circle-left"></i>
+                      </span>Voltar</button>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+  </div>
+
+
+<div class="form-row" *ngIf="service.show_id != 0">
+  <div class="form-group col-sm-12">
+    <app-pending-items [master_id]="service.show_id"></app-pending-items>
+  </div>
+</div>

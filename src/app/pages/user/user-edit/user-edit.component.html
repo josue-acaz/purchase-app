@@ -1,0 +1,40 @@
+<div class="col-sm-12">
+    <div class="card">
+      <div class="card-body">
+        <form [formGroup]="mainForm" novalidate>
+          <div class="form-row">
+            <div class="form-group col-sm-3"><label for="use_name">Nome</label><input type="text" #input_focus formControlName="use_name" class="form-control"></div>
+            <div class="form-group col-sm-3"><label for="use_function">Função</label><input type="text" formControlName="use_function" class="form-control"></div>
+            <div class="form-group col-sm-3"><label for="use_sector">Setor</label><input type="text" formControlName="use_sector" class="form-control"></div>
+            <div class="form-group col-sm-3"><label for="use_email">Email</label><input type="text" formControlName="use_email" class="form-control"></div>
+            <div class="form-group col-sm-2"><label for="use_phone">Telefone</label><input type="text" formControlName="use_phone" class="form-control"></div>
+            <div class="form-group col-sm-2"><label for="use_password">Senha</label><input type="text" formControlName="use_password" class="form-control"></div>
+            <!--<div class="form-group col-sm-2" style="margin-top: 34px;"><div class="form-check checkbox"><input class="form-check-input" type="checkbox" formControlName="use_mechanical"><label class="form-check-label" for="use_mechanical">Mecânico</label></div></div>-->
+            <div class="form-group col-sm-2" style="margin-top: 34px;"><div class="form-check checkbox"><input class="form-check-input" type="checkbox" formControlName="use_active"><label class="form-check-label" for="use_active">Ativo</label></div></div>
+          </div>
+          <div *ngIf="errors.length > 0"  class="alert alert-danger"><p *ngFor="let erro of errors">{{ erro }}</p></div>
+          <div class="form-row">
+            <div class="form-group col-sm-2"><button type="button" class="btn btn-outline-primary  btn-block" [disabled]="processing"   (click)="save()">Salvar</button></div>
+            <div class="form-group col-sm-2"><button type="button" class="btn btn-outline-primary  btn-block" [disabled]="processing"   (click)="modalService.open('confirm-delete-modal-user');">Excluir</button></div>
+            <div class="form-group col-sm-2"><button type="button" class="btn btn-outline-primary  btn-block" [disabled]="processing"   (click)="list()">Voltar</button></div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-row" *ngIf="this.mainForm.value.use_id != 0" >
+    <div class="form-group col-sm-12">
+      <app-user-permission [master_id]="this.mainForm.value.use_id"></app-user-permission>
+    </div>
+  </div>
+
+  <jw-modal id="confirm-delete-modal-user" number_modal="1">
+    <div class="content-modal">
+      <p>Deseja excluir o registro atual?</p>
+      <div class="form-row">
+        <div class="form-group col-sm-6"><button type="button" class="btn btn-danger btn-block" (click)="delete()">SIM</button></div>
+        <div class="form-group col-sm-6"><button type="button" class="btn btn-primary btn-block" (click)="modalService.close('confirm-delete-modal-user');">NÃO</button></div>
+      </div>
+    </div>
+  </jw-modal>

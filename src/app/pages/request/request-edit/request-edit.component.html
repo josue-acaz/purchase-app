@@ -1,0 +1,98 @@
+<div class="col-sm-12">
+  <div class="card">
+    <div class="card-body">
+      <form [formGroup]="requestForm">
+        <div class="form-row">
+          <!--APLICAÇÃO-->
+          <div class="form-group col-sm-6">
+            <label for="req_application">Aplicação</label>
+            <input [readonly]="isReadOnly" type="text" formControlName="req_application" class="form-control">
+            <div class="small" *ngIf="!requestForm.controls['req_application'].valid && requestForm.controls['req_application'].touched" style="color: red">Esse campo não pode ficar em branco!</div>
+          </div>
+          <!--PRIORIDADE-->
+          <div class="form-group col-sm-3">
+            <label for="req_priority">Prioridade</label>
+            <select formControlName="req_priority" class="form-control">
+              <option *ngFor='let rp of request_priority' [value]="rp.value">{{ rp.value }}</option>
+            </select>
+          </div>
+          <!--DATA LIMITE-->
+          <div class="form-group col-sm-3">
+            <label for="req_deadline">Data limite</label>
+            <input [readonly]="isReadOnly" type="text" #input_focus formControlName="req_deadline" [textMask]="{ mask: dateMask }" class="form-control">
+            <div *ngIf="(requestForm.controls['req_deadline'].valid || requestForm.controls['req_deadline'].invalid) && requestForm.controls['req_deadline'].touched">
+              <div class="small" *ngIf="!fluent.isValidDate(requestForm.controls['req_deadline'].value)" style="color: red">
+                Data inválida!
+                <div *ngIf="requestForm.controls['req_deadline'].setErrors({'invalid': true})"></div>
+              </div>
+            </div>
+          </div>
+          <!--TAREFA-->
+          <div class="form-group col-sm-12">
+            <label for="req_description">Tarefa</label>
+            <input [readonly]="isReadOnly" type="text" formControlName="req_description" class="form-control">
+            <div class="small" *ngIf="!requestForm.controls['req_description'].valid && requestForm.controls['req_description'].touched" style="color: red">Esse campo não pode ficar em branco!</div>
+          </div>
+        </div>
+        <div *ngIf="errors.length > 0"  class="alert alert-danger"><p *ngFor="let erro of errors">{{ erro }}</p></div>
+        <div class="form-row">
+          <div class="form-group col-sm-2" *ngIf="(requestForm.value.req_status=='E' && requestForm.value.req_id == 0) || data_edit.req_status=='E'"><button type="button" class="btn btn-outline-primary  btn-block" [disabled]="processing" [disabled]="requestForm.invalid" (click)="OnSubmitRequest()">Salvar</button></div>
+          <div class="form-group col-sm-2" *ngIf="requestForm.value.req_status=='E' && requestForm.value.req_id!=0"><button type="button" class="btn btn-outline-primary  btn-block" [disabled]="processing" (click)="modalService.open('confirm-finish-modal-request');">Efetivar</button></div>
+          <div class="form-group col-sm-2" *ngIf="requestForm.value.req_status=='A' || requestForm.value.req_status=='C' || requestForm.value.req_status=='P' && requestForm.value.req_id!=0"><button type="button" class="btn btn-outline-danger  btn-block" [disabled]="processing" (click)="modalService.open('confirm-reopen-modal-request');">Reabrir</button></div>
+          <div class="form-group col-sm-2" *ngIf="requestForm.value.req_status=='E' && requestForm.value.req_id!=0"><button type="button" class="btn btn-outline-danger  btn-block" [disabled]="processing" (click)="modalService.open('confirm-delete-modal-request');">Excluir</button></div>
+          <div class="form-group col-sm-2"><button type="button" class="btn btn-outline-primary  btn-block" [disabled]="processing" (click)="list()">Voltar</button></div>
+        </div>
+        <div class="float-right" *ngIf="requestForm.value.req_status=='A'">
+          <h2><span class="badge badge-warning">Pendente</span></h2>
+        </div>
+        <div class="float-right" *ngIf="requestForm.value.req_status=='C'">
+          <h2><span class="badge badge-success">Aprovada</span></h2>
+        </div>
+        <div class="float-right" *ngIf="requestForm.value.req_status=='P'">
+          <h2><span class="badge badge-primary">Aprovada parcialmente</span></h2>
+        </div>
+        <div class="float-right" *ngIf="requestForm.value.req_status=='N'">
+          <h2><span class="badge badge-danger">Não aprovada</span></h2>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!--Passar o id da requisição atual como master-->
+<div class="form-row" *ngIf="this.requestForm.value.req_id != 0">
+  <div class="form-group col-sm-12">
+    <app-request-item [master_id]="this.requestForm.value.req_id" [master_status]="this.requestForm.value.req_status"></app-request-item>
+  </div>
+</div>
+
+<!--Modal de efetivar a requisição atual-->
+<jw-modal id="confirm-finish-modal-request" number_modal="1">
+  <div class="content-modal">
+    <p>Deseja EFETIVAR a requisição atual?</p>
+    <div class="form-row">
+      <div class="form-group col-sm-6"><button type="button" class="btn btn-danger btn-block" (click)="finish()">SIM</button></div>
+      <div class="form-group col-sm-6"><button type="button" class="btn btn-primary btn-block" (click)="modalService.close('confirm-finish-modal-request');">NÃO</button></div>
+    </div>
+  </div>
+</jw-modal>
+<!--Modal de reabrir a requisição atual-->
+<jw-modal id="confirm-reopen-modal-request" number_modal="1">
+  <div class="content-modal">
+    <p>Deseja REABRIR a transação atual?</p>
+    <div class="form-row">
+      <div class="form-group col-sm-6"><button type="button" class="btn btn-danger btn-block" (click)="reopen()">SIM</button></div>
+      <div class="form-group col-sm-6"><button type="button" class="btn btn-primary btn-block" (click)="modalService.close('confirm-reopen-modal-request');">NÃO</button></div>
+    </div>
+  </div>
+</jw-modal>
+<!--Moda de excluir a requisição atual-->
+<jw-modal id="confirm-delete-modal-request" number_modal="1">
+  <div class="content-modal">
+    <p>Deseja EXCLUIR o registro atual?</p>
+    <div class="form-row">
+      <div class="form-group col-sm-6"><button type="button" class="btn btn-danger btn-block" (click)="delete()">SIM</button></div>
+      <div class="form-group col-sm-6"><button type="button" class="btn btn-primary btn-block" (click)="modalService.close('confirm-delete-modal-request');">NÃO</button></div>
+    </div>
+  </div>
+</jw-modal>

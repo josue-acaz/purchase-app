@@ -1,0 +1,61 @@
+<div class="col-sm-12 text-center" *ngIf="processing"><img src="assets/img/loading2.gif" class="img" width="50px"></div>
+
+<div *ngIf="errors.length > 0"  class="alert alert-danger"><div *ngFor="let erro of errors">{{ erro }}</div></div>
+
+<div  [style.display]="service.action=='listing'?'inherit':'none'">
+  <div class="col-sm-12">
+    <div class="card">
+    <div class="card-header">
+      <strong>Permissões</strong>
+      <div class="float-right ">
+        <a href="javascript:void(0)" (click)="applyPerfil()">Atualizar</a>
+      </div>
+    </div>
+      <div class="card-body">
+        <div id="no-more-tables">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th class="tbl-col1">Recurso</th>
+                <th class="tbl-col2">Ler</th>
+                <th class="tbl-col3">Criar</th>
+                <th class="tbl-col4">Editar</th>
+                <th class="tbl-col5">Deletar</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let obj of data_list">
+                <td data-title="Rotina" class="tbl-col1">{{ obj.resource_name }}</td>
+                <td data-title="Ler" class="tbl-col2">
+                    <label class="switch switch-text switch-primary">
+                        <input type="checkbox" [checked]="obj.per_read" class="switch-input" checked=false (change)="saveCheck(obj.per_id,'read',$event.target.checked);">
+                        <span class="switch-label" data-on="On" data-off="Off"></span>
+                    </label>
+                </td>
+                <td data-title="Criar" class="tbl-col3">
+                    <label class="switch switch-text switch-primary">
+                        <input type="checkbox" [checked]="obj.per_create" class="switch-input" checked=false (change)="saveCheck(obj.per_id,'create',$event.target.checked);">
+                        <span class="switch-label" data-on="On" data-off="Off"></span>
+                    </label>
+                </td>
+                <td data-title="Editar" class="tbl-col4">
+                    <label class="switch switch-text switch-primary">
+                        <input type="checkbox" [checked]="obj.per_update" class="switch-input" checked=false (change)="saveCheck(obj.per_id,'update',$event.target.checked);">
+                        <span class="switch-label" data-on="On" data-off="Off"></span>
+                    </label>
+                </td>
+                <td data-title="Deletar" class="tbl-col5">
+                    <label class="switch switch-text switch-primary">
+                        <input type="checkbox" [checked]="obj.per_delete" class="switch-input" checked=false (change)="saveCheck(obj.per_id,'delete',$event.target.checked);">
+                        <span class="switch-label" data-on="On" data-off="Off"></span>
+                    </label>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

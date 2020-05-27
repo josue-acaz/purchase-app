@@ -1,0 +1,100 @@
+<div class="row">
+  <!-- Article Content-->
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-header"><strong><h4>ITENS</h4></strong></div>
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th><input type="checkbox" [(ngModel)]="masterSelected" name="list_name" value="m1" (change)="checkUncheckAll()"/> Todos</th>
+                <th><strong>PN</strong></th>
+                <th><strong>Qtd Solicitada</strong></th>
+                <th><strong>Qtd Aprovada</strong></th>
+                <th><strong>Aplicação</strong></th>
+                <th><strong>Prioridade</strong></th>
+                <th><strong>Data limite</strong></th>
+                <th><strong>Descrição</strong></th>
+                <th class="text-center"><strong>Status atual</strong></th>
+              </tr>
+            </thead>
+              <tbody *ngFor="let obj of checkItems">
+                <!--<span class="badge badge-success">Approved</span>-->
+                <!--<span class="badge badge-danger">Rejected</span>-->
+                <tr>
+                  <td><input type="checkbox" [(ngModel)]="obj.isSelected" name="list_name" value="{{obj.id}}" (change)="isAllSelected()"/></td>
+                  <td>{{ obj.item.itm_pn }}</td>
+                  <td>{{ obj.item.itm_quantity }}</td>
+                  <td><input style="width: 4em;" type="number" [(ngModel)]="obj.item.itm_approved_quantity" [value]="obj.item.itm_quantity" min="1"></td>
+                  <td><a>{{ obj.item.itm_application }}</a></td>
+                  <td>{{ obj.item.itm_priority }}</td>
+                  <td>{{ obj.item.itm_deadline }}</td>
+                  <td>{{ obj.item.itm_description }}</td>
+                  <td class="text-center" *ngIf="obj.item.itm_status_id == 2"><span class="badge badge-warning">Pendente</span></td>
+                  <td class="text-center" *ngIf="obj.item.itm_status_id == 4 && obj.item.itm_quantity == obj.item.itm_approved_quantity"><span class="badge badge-success">Aprovado</span></td>
+                  <td class="text-center" *ngIf="obj.item.itm_status_id == 3"><span class="badge badge-danger">Não Aprovado</span></td>
+                  <td class="text-center" *ngIf="obj.item.itm_status_id == 4 && obj.item.itm_quantity != obj.item.itm_approved_quantity"><span class="badge badge-primary">Aprovado parcialmente</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!--Lista de erros-->
+          <div *ngIf="errors.length > 0"  class="alert alert-danger"><p *ngFor="let erro of errors">{{ erro }}</p></div>
+          <div class="card-body">
+            <!--Área de comentário do aprovador-->
+            <form class="mb-2 mt-2" method="post" action="">
+                <textarea class="form-control" rows="4" placeholder="Adicionar comentário ao requisitante..."></textarea>
+            </form>
+            <div class="clearfix">
+                <div class="float-left">
+                    <ul class="nav nav-pills">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <em class="far fa-image"></em>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <em class="fas fa-paperclip"></em>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <!--<div class="float-right">
+                    <button class="btn btn-success" type="button">Post</button>
+                </div>-->
+            </div>
+            <!--Aprovar selecionados-->
+            <button class="mt-1 btn btn-labeled btn-success mb-1" type="button" (click)="modalService.open('confirm-reopen-modal-request');" [disabled]="processing">
+              <span class="btn-label"><i class="fa fa-check"></i>
+            </span>Aprovar selecionados</button>
+            <!--Rejeitar requisição-->
+            <button class="mt-1 ml-2 btn btn-labeled btn-danger mb-1" type="button" (click)="modalService.open('confirm-delete-modal-request');" [disabled]="processing">
+              <span class="btn-label"><i class="fa fa-times"></i>
+            </span>Rejeitar selecionados</button>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+<!--Modal de aprovar os itens selecionados-->
+<jw-modal id="confirm-reopen-modal-request" number_modal="1">
+  <div class="content-modal">
+    <p>APROVAR os itens selecionados?</p>
+    <div class="form-row">
+      <div class="form-group col-sm-6"><button type="button" class="btn btn-danger btn-block" (click)="approveCheckedItems()">SIM</button></div>
+      <div class="form-group col-sm-6"><button type="button" class="btn btn-primary btn-block" (click)="modalService.close('confirm-reopen-modal-request');">NÃO</button></div>
+    </div>
+  </div>
+</jw-modal>
+<!--Moda de rejeitar os itens selecionados-->
+<jw-modal id="confirm-delete-modal-request" number_modal="1">
+  <div class="content-modal">
+    <p>REJEITAR os itens selecionados?</p>
+    <div class="form-row">
+      <div class="form-group col-sm-6"><button type="button" class="btn btn-danger btn-block" (click)="rejectCheckedItems()">SIM</button></div>
+      <div class="form-group col-sm-6"><button type="button" class="btn btn-primary btn-block" (click)="modalService.close('confirm-delete-modal-request');">NÃO</button></div>
+    </div>
+  </div>
+</jw-modal>

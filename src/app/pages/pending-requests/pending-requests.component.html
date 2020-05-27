@@ -1,0 +1,75 @@
+<!--Barra de pesquisa-->
+<form [formGroup]="searchForm" novalidate (ngSubmit)="first_page()">
+  <div class="content-heading breadcrumb">
+
+    <div class="col-sm-4"><h3>Aprovar solicitações</h3></div>
+    <div class="col-sm-8">
+      <div class="input-group">
+        <input type="text" formControlName="text_search" #textsearch class="form-control" (focus)="advance_search=true;" placeholder="Pesquisar por...">
+        <span class="input-group-append">
+          <button type="button" class="btn btn-primary" (click)="first_page()"><i class="fa fa-search"></i></button>
+        </span>
+      </div>
+
+      <!--BUSCA AVANÇADA-->
+      <div class="dropdown-jr-content" [style.display]="advance_search==true ? 'inherit' : 'none'">
+        <button type="button" class="close" (click)="advance_search=false;"><span>&times;</span></button>
+        <div class="form-row">
+          <div class="form-check mb-2 mr-sm-2">
+              <div class="checkbox c-checkbox">
+                  <label><input type="checkbox" formControlName="list_pending" /><span class="fa fa-check"></span>Mostrar Pendentes</label>
+              </div>
+          </div>
+          <div class="form-check mb-2 mr-sm-2">
+              <div class="checkbox c-checkbox">
+                  <label><input type="checkbox" formControlName="list_finished" /><span class="fa fa-check"></span>Mostrar Finalizadas</label>
+              </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</form>
+<div class="card card-default" [style.display]="service.action=='listing'?'inherit':'none'">
+    <div class="card-header"><h4><strong>Requisições aguardando aprovação</strong></h4></div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table datatable="" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th class="wd-md">Tarefa</th>
+                        <th>Requisitante</th>
+                        <th>Prioridade</th>
+                        <th>Aplicação</th>
+                        <th>Solicitada em</th>
+                        <th>Data limite</th>
+                        <th class="text-center"><strong>Status atual</strong></th>
+                    </tr>
+                </thead>
+                <tbody *ngFor="let obj of data_list">
+                    <tr>
+                        <td><a>{{ obj.req_description }}</a></td>
+                        <td><a href="">{{ obj.use_name }}</a></td>
+                        <td><a class="mr-2 badge">{{ obj.req_priority }}</a></td>
+                        <td> <a class="mr-1 badge badge-primary" href="">{{ obj.req_application }}</a></td>
+                        <td>{{ obj.req_sent_date_hour }}</td>
+                        <td>{{ obj.req_deadline }}</td>
+                        <div *ngIf="obj.req_status == 'A'"><td class="text-center"><span class="badge badge-warning">Pendente</span></td></div>
+                        <div *ngIf="obj.req_status == 'C'"><td class="text-center"><span class="badge badge-success">Aprovada</span></td></div>
+                        <div *ngIf="obj.req_status == 'P'"><td class="text-center"><span class="badge badge-primary">Aprovada parcialmente</span></td></div>
+                        <div *ngIf="obj.req_status == 'N'"><td class="text-center"><span class="badge badge-danger">Não aprovada</span></td></div>
+                        <td>
+                            <button type="button" class="mr-1 btn btn-info btn-xs" href="javascript:void(0);" (click)="show(obj.req_id);">Detalhar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!--Mostrar itens da requisição-->
+<div [style.display]="service.action=='showing'?'inherit':'none'">
+  <app-show-request></app-show-request>
+</div>

@@ -1,0 +1,56 @@
+<div class="col-sm-12 text-center" *ngIf="processing"><img src="assets/img/loading2.gif" class="img" width="50px"></div>
+
+<div *ngIf="errors.length > 0"  class="alert alert-danger"><div *ngFor="let erro of errors">{{ erro }}</div></div>
+
+<div  [style.display]="service.action=='listing'?'inherit':'none'">
+  <div class="col-sm-12">
+    <div class="card">
+
+    <div class="card-header">
+      Itens
+      <div class="float-right" *ngIf="service.master_status == 'E'">
+        <a href="javascript:void(0);" class="btn-setting" (click)="edit(0);"><span class="fa fa-plus"></span> Adicionar </a>
+      </div>
+    </div>
+      <div class="card-body">
+        <div class="list-group-item"  *ngFor="let obj of data_list">
+          <div class="d-flex align-items-center py-3">
+            <div class="col-sm-12 row">
+
+              <div class="col-sm-6">
+                <p class="m-0 lead">PN: <strong>{{ obj.itm_pn }}</strong></p>
+                <p class="m-0 lead">Descrição: <strong>{{ obj.itm_description }}</strong></p>
+                <div *ngIf="obj.itm_status_id == 2"><p class="mt-2 badge badge-warning" href="">Pendente</p></div>
+                <div *ngIf="obj.itm_status_id == 3"><p class="mt-2 badge badge-danger" href="">Não aprovado</p></div>
+                <div *ngIf="obj.itm_status_id == 4 && obj.itm_quantity == obj.itm_approved_quantity"><p class="mt-2 badge badge-success" href="">Aprovado</p></div>
+                <div *ngIf="obj.itm_status_id == 4 && obj.itm_quantity != obj.itm_approved_quantity"><p class="mt-2 badge badge-primary" href="">Aprovado parcialmente</p></div>
+              </div>
+
+              <div class="col-sm-2 text-right">
+                <p class="m-0 lead"><small>Qtd solicitada:</small><br/><strong>{{ obj.itm_quantity }}</strong></p>
+                <p class="m-0 lead"><small>Qtd aprovada:</small><br/><strong>{{ obj.itm_approved_quantity }}</strong></p>
+              </div>
+
+              <div class="col-sm-2 text-right">
+                <p class="m-0 lead"><small>Aplicação:</small><br/><strong>{{  obj.itm_application }}</strong></p>
+              </div>
+
+              <div class="col-sm-2 text-right">
+                <p class="m-0 lead"><small>Prioridade:</small><br/><strong>{{  obj.itm_priority }}</strong></p>
+                <br/>
+                <p class="m-0" *ngIf="service.master_status == 'E'"><a href="javascript:void(0);" (click)="edit(obj.itm_id);"> Editar </a></p>
+                <p class="m-0" *ngIf="service.master_status == 'A' || service.master_status == 'C' || service.master_status == 'P' || service.master_status == 'N'"><a href="javascript:void(0);" (click)="edit(obj.itm_id);"> Ver </a></p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div  [style.display]="service.action=='editing'?'inherit':'none'">
+  <app-request-item-edit></app-request-item-edit>
+</div>
